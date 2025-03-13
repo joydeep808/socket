@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.io Chat</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .messages {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+        .input-area {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Socket.io Chat</h1>
+    <div>
+        <label for="userId">Your User ID: </label>
+        <input type="text" id="userId" placeholder="Enter your user ID">
+        <button onclick="registerUser()">Register</button>
+    </div>
+
+    <div>
+        <label for="targetUserId">Target User ID: </label>
+        <input type="text" id="targetUserId" placeholder="Enter target user ID">
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div class="input-area">
+        <textarea id="messageInput" placeholder="Type a message..." rows="3" cols="30"></textarea>
+        <br>
+        <button onclick="sendMessage()">Send Message</button>
+    </div>
+
+    <script>
+        const socket = io("http://localhost:3000");
+
+        // Register the user with their user ID
+        function registerUser() {
+            const userId = document.getElementById('userId').value;
+            if (userId) {
+                socket.emit('register', userId); // Register with server
+            } else {
+                alert('Please enter a user ID');
+            }
+        }
+
+        // Send a message to a specific user
+        function sendMessage() {
+            const targetUserId = document.getElementById('targetUserId').value;
+            const message = document.getElementById('messageInput').value;
+
+            if (targetUserId && message) {
+                // Prepare message object
+                const messageData = { sender: "Joy", message: message  , reciver:targetUserId  };
+                socket.emit('message', messageData);
+                document.getElementById('messageInput').value = ''; // Clear input
+            } else {
+                alert('Please enter both a target user ID and a message');
+            }
+        }
+
+        // Display incoming messages
+        socket.on('message', (message) => {
+            const messagesDiv = document.getElementById('messages');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message.message;
+            messagesDiv.appendChild(messageElement);
+
+            // Scroll to the bottom of the messages container
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+
+    </script>
+</body>
+</html>

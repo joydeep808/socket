@@ -1,0 +1,4 @@
+node_modules
+dist
+.env
+socket_realtime.json
