@@ -58,12 +58,13 @@
 
         // Send a message to a specific user
         function sendMessage() {
+            const sender = document.getElementById('userId').value;
             const targetUserId = document.getElementById('targetUserId').value;
             const message = document.getElementById('messageInput').value;
 
             if (targetUserId && message) {
                 // Prepare message object
-                const messageData = { sender: "Joy", message: message  , reciver:targetUserId  };
+                const messageData = { sender, message: message  , reciver:targetUserId  };
                 socket.emit('message', messageData);
                 document.getElementById('messageInput').value = ''; // Clear input
             } else {
